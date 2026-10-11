@@ -1,0 +1,50 @@
+# ===== Build output =====
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# ===== IDE — IntelliJ =====
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# ===== IDE — Eclipse =====
+.classpath
+.project
+.settings/
+bin/
+
+# ===== IDE — VS Code =====
+.vscode/
+
+# ===== IDE — NetBeans =====
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ===== OS files =====
+.DS_Store
+Thumbs.db
+
+# ===== Maven =====
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/MavenWrapperDownloader.java
+
+# ===== Spring Boot =====
+*.log
+spring-shell.log
+
+# ===== Environment =====
+.env
+*.env.local
