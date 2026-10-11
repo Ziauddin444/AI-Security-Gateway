@@ -27,3 +27,19 @@ sequenceDiagram
         AI-->>Gateway: AI Response
         Gateway-->>Client: 200 OK (Success + Sanitized Prompt)
     end
+```
+
+✨ Key Features
+OWASP LLM Top 10 Mitigation: Blocks common prompt injection patterns (e.g., "jailbreak", "ignore previous instructions", "system prompt").
+Automated PII Redaction: Uses Regex to automatically mask emails and phone numbers with [EMAIL_REDACTED] and [PHONE_REDACTED].
+Global Exception Handling: Returns clean, predictable JSON error responses (403 Forbidden) instead of raw stack traces.
+Zero External AI Dependencies: Routes traffic to a local, self-hosted Ollama instance for complete data privacy.
+🛠️ Tech Stack
+Language: Java 21/25
+Framework: Spring Boot 3.4.x
+Build Tool: Maven
+AI Backend: Ollama (running llama3.2)
+🚀 Getting Started
+Prerequisites
+Install Java 21+
+    
