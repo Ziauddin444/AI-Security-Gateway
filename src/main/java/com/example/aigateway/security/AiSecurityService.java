@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.example.aigateway.exception.PromptInjectionException;
+
 /**
  * Performs two-phase sanitisation on user prompts:
  * <ol>
@@ -79,8 +81,8 @@ public class AiSecurityService {
             if (pattern.matcher(prompt).find()) {
                 String matched = pattern.pattern().replace("\\s+", " ");
                 log.warn("Prompt injection detected — matched pattern: {}", matched);
-                throw new RuntimeException(
-                        "Prompt injection detected: input matches forbidden pattern [" + matched + "]"
+                throw new PromptInjectionException(
+                        "Potential prompt injection attack detected."
                 );
             }
         }

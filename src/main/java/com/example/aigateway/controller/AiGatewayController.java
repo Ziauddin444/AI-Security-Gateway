@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +17,9 @@ import com.example.aigateway.security.AiSecurityService;
  * REST controller that exposes the AI Security Gateway endpoint.
  *
  * <p>Flow: receive prompt → sanitise → forward to Ollama → return response.</p>
+ *
+ * <p>Exception handling is delegated to
+ * {@link com.example.aigateway.exception.GlobalExceptionHandler}.</p>
  */
 @RestController
 @RequestMapping("/api/v1/ai")
@@ -41,43 +43,19 @@ public class AiGatewayController {
     public ResponseEntity<Map<String, String>> chat(@RequestBody Map<String, String> request) {
         String originalPrompt = request.get("prompt");
 
-        if (originalPrompt == null || originalPrompt.isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "status", "ERROR",
-                    "reason", "Request body must contain a non-empty 'prompt' field"
-            ));
-        }
+        // 1. Sanitize (throws PromptInjectionException if blocked — handled globally)
+        String sanitizedPrompt = securityService.sanitize(originalPrompt);
 
-        // ── Phase 1: Sanitise ───────────────────────────────────────────────
-        String sanitizedPrompt;
-        try {
-            sanitizedPrompt = securityService.sanitize(originalPrompt);
-        } catch (RuntimeException ex) {
-            log.warn("Prompt blocked: {}", ex.getMessage());
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
-                    "status", "BLOCKED",
-                    "reason", ex.getMessage()
-            ));
-        }
+        // 2. Query AI
+        String aiResponse = ollamaClient.generate(sanitizedPrompt);
+        log.info("AI response received ({} chars)", aiResponse.length());
 
-        // ── Phase 2: Forward to Ollama ──────────────────────────────────────
-        try {
-            String aiResponse = ollamaClient.generate(sanitizedPrompt);
-            log.info("AI response received ({} chars)", aiResponse.length());
-
-            return ResponseEntity.ok(Map.of(
-                    "status", "SUCCESS",
-                    "original_prompt", originalPrompt,
-                    "sanitized_prompt", sanitizedPrompt,
-                    "ai_response", aiResponse
-            ));
-        } catch (Exception ex) {
-            log.error("Ollama call failed", ex);
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(Map.of(
-                    "status", "ERROR",
-                    "reason", "AI backend unavailable: " + ex.getMessage()
-            ));
-        }
+        // 3. Return success
+        return ResponseEntity.ok(Map.of(
+                "status", "SUCCESS",
+                "original_prompt", originalPrompt,
+                "sanitized_prompt", sanitizedPrompt,
+                "ai_response", aiResponse
+        ));
     }
 }
-
