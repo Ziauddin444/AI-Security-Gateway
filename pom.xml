@@ -18,10 +18,9 @@
     <name>AI Security Gateway</name>
     <description>AI Security Gateway with prompt injection detection and PII redaction</description>
 
-        <properties>
-		<java.version>21</java.version>
-		<maven.compiler.release>21</maven.compiler.release>
-	</properties>
+    <properties>
+        <java.version>21</java.version>
+    </properties>
 
     <dependencies>
         <dependency>

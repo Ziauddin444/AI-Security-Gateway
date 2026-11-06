@@ -6,3 +6,4 @@ public class PromptInjectionException extends RuntimeException {
         super(message);
     }
 }
+

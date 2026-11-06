@@ -55,7 +55,7 @@ public class AiSecurityService {
      *
      * @param rawPrompt the unprocessed user input
      * @return the sanitised prompt with PII redacted
-     * @throws RuntimeException if a prompt-injection attempt is detected
+     * @throws PromptInjectionException if a prompt-injection attempt is detected
      */
     public String sanitize(String rawPrompt) {
         if (rawPrompt == null || rawPrompt.isBlank()) {
